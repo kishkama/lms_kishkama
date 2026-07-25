@@ -1,0 +1,32 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+
+# Python (future FastAPI backend)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+*.db
+*.db-journal
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Crash dumps (MSYS/Git Bash)
+*.stackdump

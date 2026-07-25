@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# tsc -b build byproducts (composite project references emit these next to source)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

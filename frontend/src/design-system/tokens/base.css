@@ -1,0 +1,5 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-ui);color:var(--text-body);background:var(--surface-page)}
+a{color:var(--text-link);text-decoration:none}
+a:hover{color:var(--text-link-hover);text-decoration:underline}
+@keyframes lf-spin{to{transform:rotate(360deg)}}
