@@ -1,6 +1,12 @@
 from urllib.parse import parse_qs, urlparse
 
 from app.services import auth_service
+from tests._credentials import (
+    BOGUS_TOKEN_PASSWORD,
+    RESET_PASSWORD_1,
+    RESET_PASSWORD_2,
+    RESET_PASSWORD_3,
+)
 
 
 def _capture_reset_link(monkeypatch):
@@ -62,7 +68,7 @@ async def test_confirm_reset_with_valid_token_updates_password_and_revokes_old_r
 
     confirm_response = await client.post(
         "/auth/password-reset/confirm",
-        json={"token": raw_token, "new_password": "brand-new-password123"},
+        json={"token": raw_token, "new_password": RESET_PASSWORD_1},
     )
     assert confirm_response.status_code == 200
 
@@ -75,7 +81,7 @@ async def test_confirm_reset_with_valid_token_updates_password_and_revokes_old_r
 
     new_password_login = await client.post(
         "/auth/login",
-        json={"email": user_credentials["email"], "password": "brand-new-password123"},
+        json={"email": user_credentials["email"], "password": RESET_PASSWORD_1},
     )
     assert new_password_login.status_code == 200
 
@@ -88,13 +94,13 @@ async def test_confirm_reset_with_reused_token_fails(client, user_credentials, m
 
     first = await client.post(
         "/auth/password-reset/confirm",
-        json={"token": raw_token, "new_password": "another-new-password123"},
+        json={"token": raw_token, "new_password": RESET_PASSWORD_2},
     )
     assert first.status_code == 200
 
     second = await client.post(
         "/auth/password-reset/confirm",
-        json={"token": raw_token, "new_password": "yet-another-password123"},
+        json={"token": raw_token, "new_password": RESET_PASSWORD_3},
     )
     assert second.status_code == 400
     assert second.json()["detail"]["code"] == "invalid_or_expired_reset_token"
@@ -103,7 +109,7 @@ async def test_confirm_reset_with_reused_token_fails(client, user_credentials, m
 async def test_confirm_reset_with_bogus_token_fails(client):
     response = await client.post(
         "/auth/password-reset/confirm",
-        json={"token": "not-a-real-token", "new_password": "somenewpassword123"},
+        json={"token": "not-a-real-token", "new_password": BOGUS_TOKEN_PASSWORD},
     )
 
     assert response.status_code == 400

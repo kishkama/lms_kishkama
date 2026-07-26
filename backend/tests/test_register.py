@@ -1,3 +1,6 @@
+from tests._credentials import SECOND_USER_PASSWORD, SHORT_PASSWORD, TEST_USER_PASSWORD
+
+
 async def test_register_creates_user(client, user_credentials):
     response = await client.post("/auth/register", json=user_credentials)
 
@@ -18,7 +21,7 @@ async def test_register_duplicate_email_returns_409(client, user_credentials):
 
 async def test_register_short_password_returns_400_with_reason(client):
     response = await client.post(
-        "/auth/register", json={"email": "shorty@example.com", "password": "abc123"}
+        "/auth/register", json={"email": "shorty@example.com", "password": SHORT_PASSWORD}
     )
 
     assert response.status_code == 400
@@ -29,11 +32,11 @@ async def test_register_short_password_returns_400_with_reason(client):
 
 async def test_register_normalizes_email_case(client):
     await client.post(
-        "/auth/register", json={"email": "Mixed.Case@Example.com", "password": "supersecret123"}
+        "/auth/register", json={"email": "Mixed.Case@Example.com", "password": TEST_USER_PASSWORD}
     )
 
     duplicate = await client.post(
-        "/auth/register", json={"email": "mixed.case@example.com", "password": "anotherpass123"}
+        "/auth/register", json={"email": "mixed.case@example.com", "password": SECOND_USER_PASSWORD}
     )
 
     assert duplicate.status_code == 409
