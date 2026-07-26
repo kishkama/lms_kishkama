@@ -10,6 +10,7 @@ from app.core.rate_limit import limiter
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from tests._credentials import TEST_USER_EMAIL, TEST_USER_PASSWORD
 
 test_engine = create_async_engine(
     "sqlite+aiosqlite://",
@@ -46,4 +47,4 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
 
 @pytest.fixture
 def user_credentials() -> dict[str, str]:
-    return {"email": "learner@example.com", "password": "supersecret123"}
+    return {"email": TEST_USER_EMAIL, "password": TEST_USER_PASSWORD}

@@ -148,7 +148,7 @@ export function AuthPage() {
     }
   };
 
-  const passwordHint = isRegister && !errors.password ? 'At least 8 characters' : undefined;
+  const minLengthHint = isRegister && !errors.password ? 'At least 8 characters' : undefined;
   const submitLabel = resetMode ? 'Send reset link' : isLogin ? 'Sign in' : 'Create account';
 
   return (
@@ -371,7 +371,7 @@ export function AuthPage() {
                   value={password}
                   onChange={onPasswordChange}
                   error={errors.password}
-                  hint={passwordHint}
+                  hint={minLengthHint}
                 />
               )}
 

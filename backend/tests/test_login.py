@@ -1,3 +1,6 @@
+from tests._credentials import UNKNOWN_LOGIN_PASSWORD, WRONG_PASSWORD
+
+
 async def test_login_with_correct_credentials_returns_tokens(client, user_credentials):
     await client.post("/auth/register", json=user_credentials)
 
@@ -14,7 +17,7 @@ async def test_login_with_wrong_password_returns_generic_401(client, user_creden
     await client.post("/auth/register", json=user_credentials)
 
     response = await client.post(
-        "/auth/login", json={"email": user_credentials["email"], "password": "wrong-password"}
+        "/auth/login", json={"email": user_credentials["email"], "password": WRONG_PASSWORD}
     )
 
     assert response.status_code == 401
@@ -23,7 +26,7 @@ async def test_login_with_wrong_password_returns_generic_401(client, user_creden
 
 async def test_login_with_unknown_email_returns_same_generic_401(client):
     response = await client.post(
-        "/auth/login", json={"email": "nobody@example.com", "password": "whatever123"}
+        "/auth/login", json={"email": "nobody@example.com", "password": UNKNOWN_LOGIN_PASSWORD}
     )
 
     assert response.status_code == 401
@@ -32,7 +35,7 @@ async def test_login_with_unknown_email_returns_same_generic_401(client):
 
 async def test_login_rate_limited_after_threshold(client, user_credentials):
     await client.post("/auth/register", json=user_credentials)
-    bad_login = {"email": user_credentials["email"], "password": "wrong-password"}
+    bad_login = {"email": user_credentials["email"], "password": WRONG_PASSWORD}
 
     responses = [await client.post("/auth/login", json=bad_login) for _ in range(6)]
 
