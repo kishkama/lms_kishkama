@@ -1,0 +1,13 @@
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.pytest_cache
+.env
+.env.*
+!.env.example
+learnflow.db
+tests
+.git
+bash.exe.stackdump
+README.md

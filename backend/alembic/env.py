@@ -3,12 +3,13 @@ from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
 from app.core.config import get_settings
 from app.db.base import Base
+from app.db.engine import build_engine_kwargs
 from app.db import models  # noqa: F401  (registers models on Base.metadata)
 
 # this is the Alembic Config object, which provides
@@ -69,9 +70,8 @@ async def run_async_migrations() -> None:
 
     """
 
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
+    connectable = create_async_engine(
+        **build_engine_kwargs(get_settings().database_url),
         poolclass=pool.NullPool,
     )
 
