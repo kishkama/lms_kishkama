@@ -1,42 +1,41 @@
-import { useState, type InputHTMLAttributes } from 'react';
+import { useState, type SelectHTMLAttributes } from 'react';
 import { Icon } from './Icon';
 
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   label?: string;
   error?: string;
   hint?: string;
-  icon?: string;
+  options: SelectOption[];
 }
 
-export function Input({ label, type = 'text', error, hint, icon, disabled, id, ...rest }: InputProps) {
-  const [show, setShow] = useState(false);
+export function Select({ label, error, hint, options, disabled, id, ...rest }: SelectProps) {
   const [focus, setFocus] = useState(false);
-  const isPassword = type === 'password';
-  const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
+  const selectId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
       {label && (
         <label
-          htmlFor={inputId}
+          htmlFor={selectId}
           style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--weight-medium)', color: 'var(--text-body)' }}
         >
           {label}
         </label>
       )}
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        {icon && (
-          <Icon name={icon} size={17} color="var(--text-muted)" style={{ position: 'absolute', left: 13 }} />
-        )}
-        <input
-          id={inputId}
-          type={isPassword && show ? 'text' : type}
+        <select
+          id={selectId}
           disabled={disabled}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           style={{
             width: '100%',
-            padding: `11px ${isPassword ? 44 : 14}px 11px ${icon ? 40 : 14}px`,
+            padding: '11px 36px 11px 14px',
             fontSize: 'var(--text-base)',
             fontFamily: 'var(--font-ui)',
             borderRadius: 'var(--radius-md)',
@@ -47,28 +46,23 @@ export function Input({ label, type = 'text', error, hint, icon, disabled, id, .
             color: 'var(--text-body)',
             transition: 'border-color var(--transition-fast), box-shadow var(--transition-fast)',
             boxSizing: 'border-box',
+            appearance: 'none',
+            cursor: disabled ? 'not-allowed' : 'pointer',
           }}
           {...rest}
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <Icon
+          name="chevron-down"
+          size={16}
+          color="var(--text-muted)"
+          style={{ position: 'absolute', right: 12, pointerEvents: 'none' }}
         />
-        {isPassword && (
-          <button
-            type="button"
-            onClick={() => setShow((s) => !s)}
-            aria-label={show ? 'Hide password' : 'Show password'}
-            style={{
-              position: 'absolute',
-              right: 10,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-muted)',
-              display: 'flex',
-              padding: 4,
-            }}
-          >
-            <Icon name={show ? 'eye-off' : 'eye'} size={17} />
-          </button>
-        )}
       </div>
       {error ? (
         <span

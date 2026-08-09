@@ -4,6 +4,7 @@ import { Input } from '../design-system/Input';
 import { Checkbox } from '../design-system/Checkbox';
 import { login, register, requestPasswordReset, type ApiError } from '../lib/api';
 import { clearSession, loadSession, saveSession, type Session } from '../lib/session';
+import { ManageCoursesPage } from './ManageCoursesPage';
 
 type View = 'login' | 'register';
 
@@ -151,6 +152,10 @@ export function AuthPage() {
   const minLengthHint = isRegister && !errors.password ? 'At least 8 characters' : undefined;
   const submitLabel = resetMode ? 'Send reset link' : isLogin ? 'Sign in' : 'Create account';
 
+  if (session) {
+    return <ManageCoursesPage userLabel={session.email} accessToken={session.accessToken} onLogout={onLogout} />;
+  }
+
   return (
     <div
       style={{
@@ -215,31 +220,7 @@ export function AuthPage() {
           <p style={{ fontSize: 'var(--text-sm)', opacity: 0.75, margin: 0 }}>Trusted by learners worldwide.</p>
         </div>
 
-        {session ? (
-          <div
-            style={{
-              flex: 1,
-              padding: 36,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 16,
-              textAlign: 'center',
-            }}
-          >
-            <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, color: 'var(--text-heading)', margin: 0 }}>
-              Welcome, {session.email}
-            </h1>
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', margin: 0 }}>
-              You're logged in to LearnFlow.
-            </p>
-            <Button variant="secondary" onClick={onLogout} style={{ marginTop: 8 }}>
-              Log out
-            </Button>
-          </div>
-        ) : (
-          <div style={{ flex: 1, padding: 36 }}>
+        <div style={{ flex: 1, padding: 36 }}>
             {resetMode ? (
               <>
                 <h1
@@ -433,8 +414,7 @@ export function AuthPage() {
                 </>
               )}
             </p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

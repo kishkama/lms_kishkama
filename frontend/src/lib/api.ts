@@ -13,7 +13,7 @@ export interface TokenResult {
   refreshToken: string;
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
 
 async function parseErrorResponse(response: Response): Promise<ApiError> {
   if (response.status === 429) {
@@ -36,14 +36,10 @@ async function parseErrorResponse(response: Response): Promise<ApiError> {
   return { code: 'unknown_error', message: 'Something went wrong. Please try again.' };
 }
 
-async function postJson<T>(path: string, payload: unknown): Promise<T> {
+export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(`${BASE_URL}${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    response = await fetch(`${BASE_URL}${path}`, init);
   } catch {
     const networkError: ApiError = {
       code: 'network_error',
@@ -56,7 +52,18 @@ async function postJson<T>(path: string, payload: unknown): Promise<T> {
     throw await parseErrorResponse(response);
   }
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
   return response.json() as Promise<T>;
+}
+
+async function postJson<T>(path: string, payload: unknown): Promise<T> {
+  return request<T>(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function register(email: string, password: string): Promise<RegisterResult> {
